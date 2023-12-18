@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include "dynamicArray.h"
+#include <string.h>
 
 #define BUFFER_SIZE 20
-#define DEFAULT_NUM 5
+#define DEFAULT_NUM 3
 
 
 typedef struct stuInfo
@@ -57,8 +58,42 @@ int main()
         dynamicArrayGetAppointPosVal(&array, idx, &val);
         printf("val: %d\n", val);
     }
-#else
+#elif 0
+    int buffer[DEFAULT_NUM] = {1, 2, 3};
+    for(int idx = 0;idx < DEFAULT_NUM; idx++)
+    {
+        dynamicArrayInsertData(&array, (void *)&buffer[idx]);
+    }
 
+    int size = 0;
+    dynamicArrayGetSize(&array, &size);
+    printf("size: %d\n", size);
+
+    int *val = NULL;
+    for(int idx = 0; idx < DEFAULT_NUM; idx++)
+    {
+        dynamicArrayGetAppointPosVal(&array, idx, (void *)&val);
+        printf("val: %d\n", *val);
+    }
+#elif 1
+    int buffer[DEFAULT_NUM] = {1, 2, 3};
+    for(int idx = 0;idx < DEFAULT_NUM; idx++)
+    {
+        dynamicArrayInsertData(&array, (void *)&idx);
+    }
+
+    int size = 0;
+    dynamicArrayGetSize(&array, &size);
+    printf("size: %d\n", size);
+
+    int *val = NULL;
+    for(int idx = 0; idx < DEFAULT_NUM; idx++)
+    {
+        dynamicArrayGetAppointPosVal(&array, idx, (void *)&val);
+        printf("val: %d\n", *val);
+    }
+
+#else
     stuInfo stu1, stu2, stu3;
     memset(&stu1, 0, sizeof(stu1));
     memset(&stu2, 0, sizeof(stu2));
@@ -73,10 +108,23 @@ int main()
     stu3.age = 30;
     stu3.sex = 'm';
 
-    //dynamicArrayInsertData(&array, stu1);
-    //dynamicArrayInsertData(&array, stu2);
-    //dynamicArrayInsertData(&array, stu3);
+    stuInfo buffer[DEFAULT_NUM] = {stu1, stu2, stu3};
+    for(int idx = 0; idx < DEFAULT_NUM; idx++)
+    {
+        dynamicArrayInsertData(&array, (void *)&buffer[idx]);
+    }
 
+    int size = 0;
+    dynamicArrayGetSize(&array, &size);
+    printf("size: %d\n", size);
+
+    stuInfo *info = NULL;
+    //memset(&info, 0, sizeof(info));
+    for(int idx = 0; idx < DEFAULT_NUM; idx++)
+    {
+        dynamicArrayGetAppointPosVal(&array, idx, (void *)&info);
+        printf("info.age: %d\t, info.sex: %c\n", info.age, info.sex);
+    }
 
 #endif
     return 0;
