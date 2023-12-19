@@ -13,6 +13,15 @@ enum STATUS_CODE
 };
 
 #define DEFALUT_SIZE 10
+#define FREE_ZERO(ptr)      \
+do                          \
+{                           \
+    if(ptr)                 \
+    {                       \
+        free(ptr);          \
+        ptr = NULL;         \
+    }                       \
+}while(0)                   \
 
 //  静态函数前置声明: 静态函数一定要前置声明
 static int extendDynamicCapacity(dynamicArray *pArray);
