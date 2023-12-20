@@ -35,7 +35,7 @@ int LinkListTailInsert(LinkList *pList, ELEMENTTYPE val);
 int LinkListAppointPosInsert(LinkList *pList, int pos, ELEMENTTYPE val);
 
 //  链表头删
-int LinkListHeadDelete(LinkList *pList, int pos);
+int LinkListHeadDelete(LinkList *pList);
 
 //  链表尾删
 int LinkListTailDelete(LinkList *pList);
