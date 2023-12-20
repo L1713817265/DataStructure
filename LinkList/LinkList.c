@@ -100,7 +100,7 @@ int LinkListAppointPosInsert(LinkList *pList, int pos, ELEMENTTYPE val)
     if(pos == pList->len)
     {
         //  修改结点指向
-        travelNode = pList->len;
+        travelNode = pList->tail;
         flag = 1;
     }
     else
