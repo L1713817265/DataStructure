@@ -58,5 +58,11 @@ int LinkListGetLength(LinkList *pList, int *pSize)
 //  链表的销毁
 int LinkListDestroy(LinkList *pList)
 {
+
+}
+
+//  链表遍历接口
+int LinkListForeach(LinkList *pList)
+{
     
 }
