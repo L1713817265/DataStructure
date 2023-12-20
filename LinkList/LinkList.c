@@ -178,7 +178,7 @@ int LinkListDeleteAppointPos(LinkList *pList, int pos)
     }
     //  跳出循环找到的是哪一个结点?
     LinkNode *needDelNode = travelNode->next;
-    travelNode->next = travelNode->next;
+    travelNode->next = needDelNode->next;
 
     if (flag)
     {
