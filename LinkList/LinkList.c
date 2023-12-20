@@ -182,15 +182,8 @@ int LinkListDeleteAppointPos(LinkList *pList, int pos)
 
     if (flag)
     {
-        /* 调整尾指针 */
+        //  调整尾指针
         pList->tail = travelNode;
-    }
-
-    /* 释放内存 */
-    if (needDelNode != NULL)
-    {
-        free(needDelNode);
-        needDelNode = NULL;
     }
 
     //  释放内存
