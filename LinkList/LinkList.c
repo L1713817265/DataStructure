@@ -15,7 +15,7 @@ enum STATUS_CODE
 
 //  静态函数只在本源文件(.c)内使用
 //  静态函数前置声明
-static int LinkListAccordAppointValGetPos(LinkList *pList, ELEMENTTYPE val);
+static int LinkListAccordAppointValGetPos(LinkList *pList, ELEMENTTYPE val, int *pPos);
 
 //  链表初始化
 int LinkListInit(LinkList **pList)
@@ -162,6 +162,15 @@ int LinkListDeleteAppointPos(LinkList *pList, int pos)
 #else
     LinkNode *travelNode = pList->head->next;
 #endif
+
+    int flag = 0;
+    //  需要修改尾指针
+    if(pos == pList->len)
+    {
+        //  需要修改尾指针
+        flag = 1;
+    }
+    LinkNode *needDelNode = NULL;
     while(--pos)
     {
         //  向后移动位置
@@ -209,7 +218,7 @@ static int LinkListAccordAppointValGetPos(LinkList *pList, ELEMENTTYPE val, int 
     }
     //  解引用
     *pPos = NOT_FIND;
-    
+
     return NOT_FIND;
 }
 
