@@ -2,6 +2,7 @@
 #include "LinkList.h"
 
 
+#define BUFFER_SIZE 10
 
 int main()
 {
