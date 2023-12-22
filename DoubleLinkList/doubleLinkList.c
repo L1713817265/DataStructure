@@ -186,8 +186,6 @@ int DoubleLinkListDeleteAppointPos(DoubleLinkList *pList, int pos)
 {
     int ret = 0;
 
-    
-
     //  指针判空
     PointerJudge(pList);
 
@@ -359,6 +357,27 @@ int DoubleLinkListForeach(DoubleLinkList *pList, int (*printFunc)(ELEMENTTYPE))
         travelNode = travelNode->next;
     }
 #endif
+
+    return ret;
+}
+
+//  链表逆序遍历接口
+int DoubleLinkListReverseForeach(DoubleLinkList *pList, int (*printFunc)(ELEMENTTYPE))
+{
+    int ret = 0;
+
+    //  指针判空
+    PointerJudge(pList);
+
+    //  travelNode指向链表的最后一个元素
+    DoubleLinkNode *travelNode = pList->tail;
+    int size = 0;
+    while(travelNode != pList->head)
+    {
+        //  包装器 . 钩子 . 回调函数
+        printFunc(travelNode->data);
+        travelNode = travelNode->prev;
+    }
 
     return ret;
 }
