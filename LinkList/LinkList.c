@@ -220,7 +220,7 @@ static int LinkListAccordAppointValGetPos(LinkList *pList, ELEMENTTYPE val, int 
         }
         #else
         cmp = compareFunc(val, travelNode->data);
-        if(cmp == 0)
+        if(cmp == 1)
         {
             //  解引用
             *pPos = pos;
