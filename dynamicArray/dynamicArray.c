@@ -13,6 +13,8 @@ enum STATUS_CODE
 };
 
 #define DEFALUT_SIZE 10
+
+//  内存释放
 #define FREE_ZERO(ptr)      \
 do                          \
 {                           \
@@ -21,37 +23,39 @@ do                          \
         free(ptr);          \
         ptr = NULL;         \
     }                       \
-}while(0)                   \
+}while(0)
 
 //  静态函数前置声明: 静态函数一定要前置声明
 static int extendDynamicCapacity(dynamicArray *pArray);
 static int shrinkDynamicCapacity(dynamicArray *pArray);
-static int pointerJudge(dynamicArray *pArray);
+static int PointerJudge(dynamicArray *pArray);
 static int positionJudge(dynamicArray *pArray, int pos);
 
 //  动态数组的初始化
-int dynamicArrayInit(dynamicArray *pArray, int capacity)
+int dynamicArrayInit(dynamicArray **pArray, int capacity)
 {
+    dynamicArray *array = (dynamicArray *)malloc(sizeof(pArray) * 1);
+
     //  指针判空
-    pointerJudge(pArray);
+    PointerJudge(array);
 
     //  避免传入非法值
-    if(capacity < 0)
+    if(capacity <= 0)
     {
         capacity = DEFALUT_SIZE;
     }
+    memset(array, 0, sizeof(dynamicArray) * 1);
 
     //  分配空间
-    pArray->data = (ELEMENTTYPE *)malloc(sizeof(ELEMENTTYPE) * capacity);
-    if(!pArray->data)
-    {
-        return MALLOC_ERROR;
-    }
+    array->data = (ELEMENTTYPE *)malloc(sizeof(ELEMENTTYPE) * capacity);
+    
     //  清除脏数据
-    memset(pArray->data, 0, sizeof(ELEMENTTYPE) * capacity);
+    memset(array->data, 0, sizeof(ELEMENTTYPE) * capacity);
 
-    pArray->len = 0;
-    pArray->capacity = capacity;
+    array->len = 0;
+    array->capacity = capacity;
+
+    *pArray = array;
 
     return ON_SUCCESS;
 }
@@ -59,7 +63,7 @@ int dynamicArrayInit(dynamicArray *pArray, int capacity)
 //  动态数组插入数据(默认插到数组的末尾)
 int dynamicArrayInsertData(dynamicArray *pArray,ELEMENTTYPE val)
 {
-    return dynamicArrayAppoinPosInsertData(pArray, pArray->len, val);
+    dynamicArrayAppoinPosInsertData(pArray, pArray->len, val);
 }
 
 //  动态数组扩容
@@ -76,6 +80,7 @@ static int extendDynamicCapacity(dynamicArray *pArray)
     {
         return MALLOC_ERROR;
     }
+    memset(pArray, 0, sizeof(ELEMENTTYPE) * needExtendCapacity);
 
     //  把之前的数据全部拷贝过来
     for(int idx = 0; idx < pArray->len; idx++)
@@ -83,12 +88,8 @@ static int extendDynamicCapacity(dynamicArray *pArray)
         pArray->data[idx] = tmpPtr[idx];
     }
 
-    //释放以前的内存 避免内存泄漏
-    if(tmpPtr)
-    {
-        free(tmpPtr);
-        tmpPtr = NULL;
-    }
+    //  释放以前的内存 避免内存泄漏
+    FREE_ZERO(tmpPtr);
 
     //  更新动态数组的容量
     pArray->capacity = needExtendCapacity;
@@ -100,7 +101,7 @@ static int extendDynamicCapacity(dynamicArray *pArray)
 int dynamicArrayAppoinPosInsertData(dynamicArray *pArray, int pos, ELEMENTTYPE val)
 {
     //  指针判空
-    pointerJudge(pArray);
+    PointerJudge(pArray);
 
     //  判断位置的合法性
     if(pos < 0 || pos > (pArray->len))
@@ -134,7 +135,7 @@ int dynamicArrayAppoinPosInsertData(dynamicArray *pArray, int pos, ELEMENTTYPE v
 int dynamicArrayModifyAppointPosData(dynamicArray *pArray, int pos, ELEMENTTYPE val)
 {
     //  指针判空
-    pointerJudge(pArray);
+    PointerJudge(pArray);
 
     //  判断位置的合法性
     positionJudge(pArray, pos);
@@ -165,6 +166,7 @@ static int shrinkDynamicCapacity(dynamicArray *pArray)
     {
         return MALLOC_ERROR;
     }
+    memset(pArray->data, 0, sizeof(ELEMENTTYPE) * needShrinkCapacity);
 
     //  拷贝之前的数据到之前的空间
     for(int idx = 0; idx < pArray->len; idx++)
@@ -173,11 +175,7 @@ static int shrinkDynamicCapacity(dynamicArray *pArray)
     }
 
     //  释放以前的内存 避免内存泄漏
-    if(tmpPtr)
-    {
-        free(tmpPtr);
-        tmpPtr = NULL;
-    }
+    FREE_ZERO(tmpPtr);
 
     //  更新动态数组的容量
     pArray->capacity = needShrinkCapacity;
@@ -189,7 +187,7 @@ static int shrinkDynamicCapacity(dynamicArray *pArray)
 int dynamicArrayDeleteAppointPosData(dynamicArray *pArray, int pos)
 {
     //  指针判空
-    pointerJudge(pArray);
+    PointerJudge(pArray);
 
     //  判断位置得到合法性
     positionJudge(pArray, pos);
@@ -200,7 +198,7 @@ int dynamicArrayDeleteAppointPosData(dynamicArray *pArray, int pos)
         shrinkDynamicCapacity(pArray);
     }
     //  数据前移
-    for(int idx = 0; idx < pArray->len; idx++)
+    for(int idx = pos; idx < pArray->len; idx++)
     {
         pArray->data[idx] = pArray->data[idx + 1];
     }
@@ -212,14 +210,22 @@ int dynamicArrayDeleteAppointPosData(dynamicArray *pArray, int pos)
 }
 
 //  动态数组删除指定的元素
-int dynamicArrayDeleteAppointData(dynamicArray *pArray, ELEMENTTYPE val)
+int dynamicArrayDeleteAppointData(dynamicArray *pArray, ELEMENTTYPE val, int (*compareFunc)(ELEMENTTYPE val1, ELEMENTTYPE val2))
 {
     for(int idx = pArray->len - 1; idx >= 0; idx--)
     {
-        if(val == pArray->data[idx])
+        #if 0
+        if (*(int *)val == *(int*)(pArray->data[idx]))
         {
             dynamicArrayDeleteAppointPosData(pArray, idx);
         }
+        #else
+        int ret = compareFunc(val, pArray->data[idx]);
+        if (ret == 1)
+        {
+            dynamicArrayDeleteAppointPosData(pArray, idx);
+        }
+        #endif
     }
     return ON_SUCCESS;
 }
@@ -228,13 +234,9 @@ int dynamicArrayDeleteAppointData(dynamicArray *pArray, ELEMENTTYPE val)
 int dynamicArrayDestroy(dynamicArray *pArray)
 {
     //  指针判空
-    pointerJudge(pArray);
+    PointerJudge(pArray);
 
-    if(pArray->data)
-    {
-        free(pArray->data);
-        pArray->data = NULL;
-    }
+    FREE_ZERO(pArray->data);
     return ON_SUCCESS;
 }
 
@@ -242,21 +244,21 @@ int dynamicArrayDestroy(dynamicArray *pArray)
 int dynamicArrayGetSize(dynamicArray *pArray, int *pSize)
 {
     //  指针判空
-    pointerJudge(pArray);
+    PointerJudge(pArray);
 
     //  解引用
     if(pSize)
     {
         *pSize = pArray->len;
     }
-    return ON_SUCCESS;
+    return pArray->len;
 }
 
 //  获取数组的容量
 int dynamicArrayGetCapacity(dynamicArray *pArray, int *pCapacity)
 {
     //  指针判空
-    pointerJudge(pArray);
+    PointerJudge(pArray);
 
     if(pCapacity)
     {
@@ -269,7 +271,7 @@ int dynamicArrayGetCapacity(dynamicArray *pArray, int *pCapacity)
 int dynamicArrayGetAppointPosVal(dynamicArray *pArray, int pos, ELEMENTTYPE *pVal)
 {
     //  指针判空
-    pointerJudge(pArray);
+    PointerJudge(pArray);
 
     //  判断位置的合法性
     positionJudge(pArray, pos);
@@ -283,7 +285,7 @@ int dynamicArrayGetAppointPosVal(dynamicArray *pArray, int pos, ELEMENTTYPE *pVa
 }
 
 //  指针判空
-static int pointerJudge(dynamicArray *pArray)
+static int PointerJudge(dynamicArray *pArray)
 {
     if(!pArray)
     {
@@ -301,4 +303,11 @@ static int positionJudge(dynamicArray *pArray, int pos)
     }
     return ON_SUCCESS;
 }
-    
+
+//  数组排序
+int dynamicArrayAppointWaySort(dynamicArray *pArray, int (*compareFunc)(ELEMENTTYPE val1, ELEMENTTYPE val2))
+{
+    int ret = 0;
+
+    return ret;
+}
