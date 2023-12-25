@@ -19,7 +19,7 @@ static int DoubleLinkListAccordAppointValGetPos(DoubleLinkList *pList, ELEMENTTY
 //  指针判空
 static int PointerJudge(DoubleLinkList *ptr);
 //  新建新结点封装成函数
-static DoubleLinkList *createDoubleLinkNode(ELEMENTTYPE val);
+static DoubleLinkNode *createDoubleLinkNode(ELEMENTTYPE val);
 
 //  链表初始化
 int DoubleLinkListInit(DoubleLinkList **pList)
@@ -71,7 +71,7 @@ int DoubleLinkListTailInsert(DoubleLinkList *pList, ELEMENTTYPE val)
 }
 
 //  新建新结点封装成函数
-static DoubleLinkList *createDoubleLinkNode(ELEMENTTYPE val)
+static DoubleLinkNode *createDoubleLinkNode(ELEMENTTYPE val)
 {
     //  封装结点
     DoubleLinkNode *newNode = (DoubleLinkNode *)malloc(sizeof(DoubleLinkNode) * 1);
@@ -204,7 +204,7 @@ int DoubleLinkListDeleteAppointPos(DoubleLinkList *pList, int pos)
     if(pos == pList->len)
     {
         //  备份尾指针
-        DoubleLinkList *tmpNode = pList->tail;
+        DoubleLinkNode *tmpNode = pList->tail;
         pList->tail = pList->tail->prev;
         needDelNode = tmpNode;
     }
@@ -380,6 +380,37 @@ int DoubleLinkListReverseForeach(DoubleLinkList *pList, int (*printFunc)(ELEMENT
     }
 
     return ret;
+}
+
+//  获取链表 头位置的值
+int DoubleLinkListGetHeadVal(DoubleLinkList *pList, ELEMENTTYPE *pVal)
+{
+    #if 0
+    return DoubleLinkListGetAppointPosVal(pList, 0, pVal);
+    #else
+    int ret = 0;
+    if(!pList)
+    {
+        return NULL_PTR;
+    }
+    if(pVal)
+    {
+        *pVal = pList->head->next->data;
+    }
+    return ret;
+    #endif
+}
+
+//  获取链表 尾位置的值
+int DoubleLinkListGetTailVal(DoubleLinkList *pList, ELEMENTTYPE *pVal)
+{
+    return DoubleLinkListGetAppointPosVal(pList, pList->len, pVal);
+}
+
+//  获取链表 指定位置的值
+int DoubleLinkListGetAppointPosVal(DoubleLinkList *pList, int pos, ELEMENTTYPE *pVal)
+{
+
 }
 
 //  指针判空
