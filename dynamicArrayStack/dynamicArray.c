@@ -40,7 +40,7 @@ int dynamicArrayInit(dynamicArray **pArray, int capacity)
     PointerJudge(array);
 
     //  避免传入非法值
-    if(capacity < 0)
+    if(capacity <= 0)
     {
         capacity = DEFALUT_SIZE;
     }
@@ -166,7 +166,7 @@ static int shrinkDynamicCapacity(dynamicArray *pArray)
     {
         return MALLOC_ERROR;
     }
-    memset(pArray, 0, sizeof(ELEMENTTYPE) * needShrinkCapacity);
+    memset(pArray->data, 0, sizeof(ELEMENTTYPE) * needShrinkCapacity);
 
     //  拷贝之前的数据到之前的空间
     for(int idx = 0; idx < pArray->len; idx++)
