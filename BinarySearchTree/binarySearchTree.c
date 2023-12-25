@@ -60,7 +60,7 @@ int binarySearchTreeInit(BinarySearchTree **pBstree)
     return ret;
 }
 
-static BSTreeNode *createBSTreeNewNode(ELEMENTTYPE val, BSTreeNode *parentNode)
+static BSTreeNode *createBSTreeNewNode(ELEMENTTYPE val, BSTreeNode *parent)
 {
     /* 分配根结点 */
     BSTreeNode *newNode = malloc(sizeof(BSTreeNode) * 1);
@@ -80,9 +80,7 @@ static BSTreeNode *createBSTreeNewNode(ELEMENTTYPE val, BSTreeNode *parentNode)
 
     /* 赋值 */
     newNode->data = val;
-
-    /* 新结点的parent指针赋值 */
-    newNode->parent = parentNode;
+    newNode->parent = parent;
 
     return newNode;
 }
