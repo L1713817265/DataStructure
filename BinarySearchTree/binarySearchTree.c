@@ -1,5 +1,8 @@
 #include "binarySearchTree.h"
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include "doubleLinkListQueue.h"
 
 //  状态码
 enum STATUS_CODE
@@ -222,7 +225,39 @@ int binarySearchTreePostOrderTravel(BinarySearchTree *pBstree)
 int binarySearchTreeLevelOrderTravel(BinarySearchTree *pBstree)
 {
     int ret = 0;
+    if(!pBstree)
+    {
+        return NULL_PTR;
+    }
+    DoubleLinkListQueue *queue = NULL;
+    doubleLinkListQueueInit(&queue);
 
+    /* 1.根结点入队 */
+    doubleLinkListQueuePush(queue, pBstree->root);
+
+    /* 2.判断队列是否为空 */
+    BSTreeNode *nodeVal = NULL;
+    while(!doubleLinkListQueueIsEmpty(queue))
+    {
+        doubleLinkListQueueTop(queue, (void **)&nodeVal);
+        printf("data: %d\n", nodeVal->data);
+        doubleLinkListQueuePop(queue);
+
+        /* 将左子树入队*/
+        if(nodeVal->left != NULL)
+        {
+            doubleLinkListQueuePush(queue, nodeVal->left);
+        }
+
+        /* 将右子树入队*/
+        if(nodeVal->right != NULL)
+        {
+            doubleLinkListQueuePush(queue, nodeVal->right);
+        }
+    }
+    
+    /* 释放队列 */
+    doubleLinkListQueueDestroy(queue);
 
     return ret;
 }
@@ -255,7 +290,5 @@ static BSTreeNode *baseAppointValGetBSTreeNode(BinarySearchTree *pBstree, ELEMEN
 /* 二叉搜索树是否包含指定的元素 */
 int binarySearchTreeIsContainAppointVal(BinarySearchTree *pBstree, ELEMENTTYPE val)
 {
-    int ret = 0;
-    baseAppointValGetBSTreeNode(pBstree, val);
-    return 0;
+    return baseAppointValGetBSTreeNode(pBstree, val) == NULL ? 0 : 1;
 }
