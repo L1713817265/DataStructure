@@ -16,6 +16,9 @@ static int compareFunc(ELEMENTTYPE val1, ELEMENTTYPE val2);
 /* 创建结点 */
 static BSTreeNode *createBSTreeNewNode(ELEMENTTYPE val, BSTreeNode *parentNode);
 
+/* 根据指定的值获取二叉搜索树的结点 */
+static BSTreeNode *baseAppointValGetBSTreeNode(BinarySearchTree *pBstree, ELEMENTTYPE val, int (*compareFunc)(ELEMENTTYPE val1, ELEMENTTYPE val2));
+
 /* 二叉搜索树的初始化 */
 int binarySearchTreeInit(BinarySearchTree **pBstree)
 {
@@ -220,4 +223,21 @@ int binarySearchTreeLevelOrderTravel(BinarySearchTree *pBstree)
 
 
     return ret;
+}
+
+static BSTreeNode *baseAppointValGetBSTreeNode(BinarySearchTree *pBstree, ELEMENTTYPE val, int (*compareFunc)(ELEMENTTYPE val1, ELEMENTTYPE val2))
+{
+    BSTreeNode *travelNode = pBstree->root;
+
+    while(travelNode)
+    {
+
+    }
+}
+/* 二叉搜索树是否包含指定的元素 */
+int binarySearchTreeIsContainAppointVal(BinarySearchTree *pBstree, ELEMENTTYPE val, int (*compareFunc)(ELEMENTTYPE val1, ELEMENTTYPE val2))
+{
+    int ret = 0;
+    baseAppointValGetBSTreeNode(pBstree, val, compareFunc);
+    return 0;
 }
