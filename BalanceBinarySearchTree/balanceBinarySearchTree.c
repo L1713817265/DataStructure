@@ -280,16 +280,9 @@ static AVLTreeNode *AVLTreeNodeGetChildTaller(AVLTreeNode *node)
     }
 }
 
-/* 左旋 */
-static int AVLTreeCurrentNodeRotateRight(BalanceBinarySearchTree *pBstree, AVLTreeNode *grand)
+static int AVLTreeNodeRotate(BalanceBinarySearchTree *pBstree, AVLTreeNode *grand, AVLTreeNode *parent, AVLTreeNode *child)
 {
     int ret = 0;
-    AVLTreeNode *parent = grand->right;
-    AVLTreeNode *child = parent->left;
-
-    grand->right = child;                // 1
-    parent->left = grand;              // 2
-
     /* p成为新的根节点 */
     parent->parent = grand->parent;     // 3
 
@@ -319,16 +312,17 @@ static int AVLTreeCurrentNodeRotateRight(BalanceBinarySearchTree *pBstree, AVLTr
 
     return ret;
 }
-/* 右旋 */
+
+/* 左旋 */
 static int AVLTreeCurrentNodeRotateRight(BalanceBinarySearchTree *pBstree, AVLTreeNode *grand)
 {
     int ret = 0;
-    AVLTreeNode *parent = grand->left;
-    AVLTreeNode *child = parent->right;
+    AVLTreeNode *parent = grand->right;
+    AVLTreeNode *child = parent->left;
 
-    grand->left = child;                // 1
-    parent->right = grand;              // 2
-
+    grand->right = child;                // 1
+    parent->left = grand;              // 2
+#if 0
     /* p成为新的根节点 */
     parent->parent = grand->parent;     // 3
 
@@ -355,7 +349,50 @@ static int AVLTreeCurrentNodeRotateRight(BalanceBinarySearchTree *pBstree, AVLTr
     /* 先更新*/
     AVLTreeNodeUpDateHeight(grand);
     AVLTreeNodeUpDateHeight(parent);
+#else
+    AVLTreeNodeRotate(pBstree, grand, parent, child);
+#endif
+    return ret;
+}
+/* 右旋 */
+static int AVLTreeCurrentNodeRotateRight(BalanceBinarySearchTree *pBstree, AVLTreeNode *grand)
+{
+    int ret = 0;
+    AVLTreeNode *parent = grand->left;
+    AVLTreeNode *child = parent->right;
 
+    grand->left = child;                // 1
+    parent->right = grand;              // 2
+#if 0
+    /* p成为新的根节点 */
+    parent->parent = grand->parent;     // 3
+
+    if(AVLTreeCurrentNodeIsLeft(grand))
+    {
+        grand->parent->left = parent;   // 4
+    }
+    else if(AVLTreeCurrentNodeIsRight(grand))
+    {
+        grand->parent->right = parent;  // 4
+    }
+    else
+    {
+        pBstree->root = parent;
+    }
+    grand->parent = parent;             // 5
+
+    if(child)
+    {
+        child->parent = grand;          // 6
+    }
+    
+    /* 更新高度 */
+    /* 先更新*/
+    AVLTreeNodeUpDateHeight(grand);
+    AVLTreeNodeUpDateHeight(parent);
+#else
+    AVLTreeNodeRotate(pBstree, grand, parent, child);
+#endif
     return ret;
 }
 
